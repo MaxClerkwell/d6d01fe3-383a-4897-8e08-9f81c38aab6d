@@ -1,6 +1,6 @@
 \documentclass{dcbl/challenge}
 
-\setdoctitle{Der Titel meines Dokuments}
+\setdoctitle{Redirecting Streams}
 \setdocauthor{Stephan Bökelmann}
 \setdocemail{sboekelmann@ep1.rub.de}
 \setdocinstitute{AG Physik der Hadronen und Kerne}
@@ -8,20 +8,81 @@
 
 \begin{document}
 
-Jedes Challenge-Blatt beginnt mit einer kurzen Einleitung, die einen Kontext für den jeweiligen Zettel setzt. 
+One of the commonly used features when it comes to programming is writing a series of characters to the terminal.
+A concept closely related to that idea of printing a series of characters is called a stream.
+At this point of our journey, we are not trying to define the exact meaning of the word stream, but rather just the idea of reading and writing characters.
+What a program is writing, we now call an output stream, a series of characters that a program reads an input stream.
+In this exercise we want to investigate, how we can redirect outputs of a program and have it send its stream somewhere else, than our terminal-buffer.
 
-\section*{Aufgaben}
+\section*{Exercises}
 \begin{aufgabe}
-    Löse die Gleichung $x^2 - 5x + 6 = 0$.
+    To work with streams, we first of all need a file with a bunch of content. 
+    We could either use a poem, a list of numbers, or a random text, which is stored in our file-system.
+    Feel free to use any of those, or choose to use \texttt{/dev/urandom} as an example.
+    When you read from this particular file, the operating system will generate a pseudo-random stream of characters. 
+    Opening it with \texttt{cat /dev/urandom} will definitly spam the terminal with random characters, since it is an infinite stream.
+    Reading from this file can easily crash your terminal, since random numbers can be generated way faster than the rest of the processes can handle.
+    In order for us, not to crash the terminal, we need to redirect this stream somewhere else.
+    To do this, we can use the \texttt{>} operator.
+    Navigate into your \texttt{$\sim$}-directory and use the following command, to read from \texttt{/dev/urandom} and write the stream directly into a file called \texttt{random.txt}: \texttt{cat /dev/urandom > random.txt}.
+    Stop the process any time by pressing \texttt{Ctrl+C}.
+    Repeat the process with a new file calles \texttt{random2.txt} and redirect the stream to that file, but vary the time it takes you to stop the process.
+    Use the command \texttt{ls -la} to list all files in your \texttt{$\sim$}-directory and compare the size of the two files.
+    Write down, what you have learned from this.
 \end{aufgabe}
 
-\begin{aufgabe}[Für Fortgeschrittene]
-    Beweise den Satz des Pythagoras.
+\begin{aufgabe}
+    No matter how fast you stopped the previous process, the files will hold a significant amount of data. 
+    Let's find out how many lines and how many words our files contain by using a different program called \texttt{wc}.
+    We used the \texttt{>}-operator earlier. 
+    This is a special operator which tells our shell, that we'd like to have our output be written to a file.
+    In order to have the output redirected to another program we have to use the \texttt{|}-operator.
+    Let's run the command \texttt{cat random.txt | wc} and observe the output.
+    \texttt{wc} will count the number of lines and words in the file and write it to the terminal.
+    We can redirect this output again to a file called \texttt{result1.txt} by writing \texttt{cat random.txt | wc > result1.txt}.
 \end{aufgabe}
 
-\section*{Anmerkungen}
+\begin{aufgabe}
+    We could do the same thing for the second file.
+    But for more than two files, this could be a bit cumbersome.
+    Let's do this in a different way by using the \texttt{>>}-operator.
+    Instead of redirecting the output to another file, we can use the \texttt{>>}-operator to append the output to an existing file.
+    Let's run \texttt{cat random2.txt | wc >> result1.txt} and observe the output.
+\end{aufgabe}
+
+\begin{aufgabe}
+    In the case of many files, it could be hard to read the output.
+    Let's make this more verbatim by adding some comments to the file and running it all again in one line. Run\\
+    \begin{itemize}
+        \item \texttt{\{ echo -n "File \#1: "; cat random.txt | wc ; echo -n "File \#2: "; cat random2.txt | wc; \} > result.txt}
+    \end{itemize}
+    By using the \texttt{\{ and \}}-operator, we can group multiple commands in one line.
+\end{aufgabe}
+
+\begin{aufgabe}
+    In order to search for a specific string inside of a stream, we can use the \texttt{grep} command.
+    Let us download the \textbf{RFC 2828}, which is the \textit{Internet Security Glossary} and search in this file for all occurences of \texttt{security}.
+    Run: \\
+    \begin{itemize}
+        \item \texttt{wget https://www.ietf.org/rfc/rfc2828.txt -O - | grep 'security'}
+    \end{itemize}
+    \texttt{wget} loads the file from its URI and \texttt{-O -} redirects the output to the standard output stream.
+    The standard output is then redirected to the program \texttt{grep} and all occurences of \texttt{security} will be marked in the terminal.
+    Try using \texttt{grep} to search in a list of files for a specific name.
+\end{aufgabe}
+
+\begin{aufgabe}
+    Another tool, commonly used in this concatenation of stream processing is \texttt{sed}, or \textit{stream editor}.
+    It is a configurable program that allows us to manipulate the content of a stream.
+    Let's try and replace every occurence of \texttt{security} with \texttt{AHHH} in the download of \textbf{RFC 2828}.
+    \begin{itemize}
+        \item \texttt{wget https://www.ietf.org/rfc/rfc2828.txt -O - | sed 's/security/AHHH/g' | grep 'AHHH'}
+    \end{itemize}
+\end{aufgabe}
+
+\section*{Annotations}
 \begin{enumerate}
-    \item Link zu einem YouTube-Video: \url{https://www.youtube.com}
+    \item Redhat Tutorial on redirects: \url{https://www.redhat.com/sysadmin/linux-shell-redirection-pipelining}
 \end{enumerate}
 
 \end{document}
